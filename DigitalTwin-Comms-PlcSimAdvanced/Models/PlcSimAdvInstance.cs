@@ -32,14 +32,13 @@ public class PlcSimAdvInstance
             _instance.CommunicationInterface = ECommunicationInterface.TCPIP;
     }
 
-    public event EventHandler? OnInitialized;
 
     public event EventHandler<PlcSimAdvEndOfCycleEventArgs>? EndOfCycle;
 
     public event EventHandler<PlcSimAdvSoftwareConfigurationChangedEventArgs>? SoftwareConfigurationChanged;
 
     public string Name { get; }
-    public bool Initialized { get; private set; }
+    public bool IsInitialized { get; set; }
     public string IpAddress { get; }
     public string SubnetMask { get; }
     public string Gateway { get; }
@@ -58,19 +57,40 @@ public class PlcSimAdvInstance
         _instance.SetIPSuite(InterfaceId, _ipSuite, true);
     }
 
-    public void PowerOff(uint timeOut = 60000)
+    public void PowerOff(uint timeOut = 6000)
     {
+        _instance.Stop(timeOut);
         _instance.PowerOff(timeOut);
     }
 
-    public void Run(uint timeOut = 60000)
+    public void Run(uint timeOut = 6000)
     {
         _instance.Run(timeOut);
+        if(!IsInitialized)
+        {
+            _instance.UpdateTagList();
+        }
+        IsInitialized = true;
     }
 
-    public void Stop(uint timeOut = 60000)
+    public void Stop(uint timeOut = 6000)
     {
         _instance.Stop(timeOut);
+    }
+
+    public void UnregisterInstance()
+    {
+        _instance.UnregisterInstance();
+    }
+
+    public bool ReadBool(string tag)
+    {
+        return _instance.ReadBool(tag);
+    }
+
+    public void WriteBool(string tag, bool value)
+    {
+        _instance.WriteBool(tag, value);
     }
 
     private void OnSoftwareConfigurationChanged(IInstance instance, SOnSoftwareConfigChangedParameter event_param)
@@ -78,11 +98,18 @@ public class PlcSimAdvInstance
         PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(event_param.ErrorCode);
         PlcSimAdvSoftwareConfigChanged configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? PlcSimAdvSoftwareConfigChanged.SoftwareChangedInRun : PlcSimAdvSoftwareConfigChanged.SoftwareChangedInStop;
         SoftwareConfigurationChanged?.Invoke(instance, new PlcSimAdvSoftwareConfigurationChangedEventArgs(errorCode, event_param.EventCreateTime, configChanged));
-        Initialized = false;
 
-        instance.UpdateTagList(ETagListDetails.IOMCTDB);
-        Initialized = true;
-        OnInitialized?.Invoke(instance, EventArgs.Empty);
+
+        IsInitialized = false;
+        try
+        {
+            instance.UpdateTagList();
+        }
+        catch (Exception ex)
+        {
+            return;
+        }
+        IsInitialized = true;
     }
 
     private void OnSyncPointReached(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, uint in_Id, long in_TimeSinceSameSyncPoint_ns, long in_TimeSinceAnySyncPoint_ns, uint in_SyncPointCount)
