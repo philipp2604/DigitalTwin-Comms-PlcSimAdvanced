@@ -5,7 +5,7 @@ using Siemens.Simatic.Simulation.Runtime;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Models;
 
-public class PlcSimAdvInstance
+public class PlcSimAdvInstance : IDisposable
 {
     private readonly IInstance _instance;
     private readonly SIPSuite4 _ipSuite;
@@ -18,6 +18,7 @@ public class PlcSimAdvInstance
         Gateway = gateway;
         InterfaceId = interfaceId;
 
+        //Ip settings
         _ipSuite = new SIPSuite4(ipAddress, subnetMask, gateway);
 
         //Register instance
@@ -103,22 +104,18 @@ public class PlcSimAdvInstance
 
     public void PowerOff(uint timeOut = 60000)
     {
-        _instance.Stop(timeOut);
+        IsInitialized = false;
         _instance.PowerOff(timeOut);
     }
 
     public void Run(uint timeOut = 60000)
     {
         _instance.Run(timeOut);
-        if (!IsInitialized)
-        {
-            //_instance.UpdateTagList();
-        }
-        IsInitialized = true;
     }
 
     public void Stop(uint timeOut = 60000)
     {
+        IsInitialized = false;
         _instance.Stop(timeOut);
     }
 
@@ -135,6 +132,22 @@ public class PlcSimAdvInstance
     public void WriteBool(string tag, bool value)
     {
         _instance.WriteBool(tag, value);
+    }
+
+    public void Dispose()
+    {
+        IsInitialized = false;
+        if(_instance != null)
+        {
+            try
+            {
+                PowerOff(5000);
+                UnregisterInstance();
+            }
+            catch { }
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     private void OnAlarmNotificationDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_SequenceNumber)
@@ -181,6 +194,21 @@ public class PlcSimAdvInstance
         var prevState = OperatingStateConverter.ConvertOperatingState(in_PrevState);
         var newState = OperatingStateConverter.ConvertOperatingState(in_OperatingState);
         OperatingStateChanged?.Invoke(in_Sender, new OperatingStateChangedEventArgs(errorCode, in_DateTime, prevState, newState));
+
+        IsInitialized = false;
+
+        if(newState == OperatingStateType.Startup)
+        {
+            try
+            {
+                _instance.UpdateTagList();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            IsInitialized = true;
+        }
     }
 
     private void OnProcessEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_Channel, EProcessEventType in_ProcessEventType, uint in_SequenceNumber)

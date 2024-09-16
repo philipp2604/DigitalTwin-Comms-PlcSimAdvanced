@@ -25,7 +25,7 @@ internal class Program
         AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
         Console.WriteLine("Hello, World!");
-        _instance.EndOfCycle += Instance_EndOfCycle;
+        _instance.SyncPointReached += Instance_EndOfCycle;
         while (true)
         {
             var key = Console.ReadKey();
@@ -95,7 +95,6 @@ internal class Program
 
     void CurrentDomain_ProcessExit(object? sender, EventArgs e)
     {
-        _instance.PowerOff();
         _instance.UnregisterInstance();
     }
 }
