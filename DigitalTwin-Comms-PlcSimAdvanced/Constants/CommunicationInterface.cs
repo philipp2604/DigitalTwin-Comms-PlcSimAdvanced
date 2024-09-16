@@ -1,6 +1,6 @@
 ﻿namespace DigitalTwin_Comms_PlcSimAdvanced.Constants;
 
-public enum CommunicationInterfaceType
+public enum CommunicationInterface
 {
     None,
     Softbus,

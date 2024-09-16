@@ -17,4 +17,17 @@ public static class LedModeConverter
             _ => throw new NotImplementedException(),
         };
     }
+
+    public static ELEDMode ConvertLedMode(LedMode ledMode)
+    {
+        return ledMode switch
+        {
+            LedMode.Off => ELEDMode.Off,
+            LedMode.On => ELEDMode.On,
+            LedMode.FlashFast => ELEDMode.FlashFast,
+            LedMode.FlashSlow => ELEDMode.FlashSlow,
+            LedMode.Invalid => ELEDMode.Invalid,
+            _ => throw new NotImplementedException(),
+        };
+    }
 }

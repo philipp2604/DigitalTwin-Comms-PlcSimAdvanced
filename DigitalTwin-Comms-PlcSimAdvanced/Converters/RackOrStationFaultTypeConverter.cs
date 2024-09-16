@@ -14,4 +14,14 @@ public static class RackOrStationFaultTypeConverter
             _ => throw new NotImplementedException(),
         };
     }
+
+    public static ERackOrStationFaultType ConvertRackOrStationFaultType(RackOrStationFaultType faultType)
+    {
+        return faultType switch
+        {
+            RackOrStationFaultType.Fault => ERackOrStationFaultType.Fault,
+            RackOrStationFaultType.Return => ERackOrStationFaultType.Return,
+            _ => throw new NotImplementedException(),
+        };
+    }
 }

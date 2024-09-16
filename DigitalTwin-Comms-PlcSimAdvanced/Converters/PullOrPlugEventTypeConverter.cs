@@ -17,4 +17,17 @@ public static class PullOrPlugEventTypeConverter
             _ => throw new NotImplementedException(),
         };
     }
+
+    public static EPullOrPlugEventType ConvertPullOrPlugEventType(PullOrPlugEventType pullOrPlugEventType)
+    {
+        return pullOrPlugEventType switch
+        {
+            PullOrPlugEventType.Undefined => EPullOrPlugEventType.Undefined,
+            PullOrPlugEventType.Pull => EPullOrPlugEventType.Pull,
+            PullOrPlugEventType.Plug => EPullOrPlugEventType.Plug,
+            PullOrPlugEventType.PlugErrorRemains => EPullOrPlugEventType.PlugErrorRemains,
+            PullOrPlugEventType.PlugWrongModule => EPullOrPlugEventType.PlugWrongModule,
+            _ => throw new NotImplementedException(),
+        };
+    }
 }

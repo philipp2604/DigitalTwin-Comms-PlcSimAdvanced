@@ -2,10 +2,10 @@
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Events;
 
-public class OperatingStateChangedEventArgs(ErrorCodeType errorCode, DateTime eventTime, OperatingStateType prevState, OperatingStateType newState) : EventArgs
+public class OperatingStateChangedEventArgs(ErrorCode errorCode, DateTime eventTime, OperatingState prevState, OperatingState newState) : EventArgs
 {
-    public ErrorCodeType ErrorCode { get; } = errorCode;
+    public ErrorCode ErrorCode { get; } = errorCode;
     public DateTime EventTime { get; } = eventTime;
-    public OperatingStateType PreviousState { get; } = prevState;
-    public OperatingStateType NewState { get; } = newState;
+    public OperatingState PreviousState { get; } = prevState;
+    public OperatingState NewState { get; } = newState;
 }

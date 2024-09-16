@@ -1,6 +1,6 @@
 ﻿namespace DigitalTwin_Comms_PlcSimAdvanced.Constants;
 
-public enum ErrorCodeType
+public enum ErrorCode
 {
     NotAllowed = -70,
     BufferOverflow = -69,

@@ -2,9 +2,9 @@
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Events;
 
-public class ProcessEventDoneEventArgs(ErrorCodeType errorCode, DateTime eventTime, uint hardwareId, uint channel, ProcessEventType processEventType, uint sequenceNumber) : EventArgs
+public class ProcessEventDoneEventArgs(ErrorCode errorCode, DateTime eventTime, uint hardwareId, uint channel, ProcessEventType processEventType, uint sequenceNumber) : EventArgs
 {
-    public ErrorCodeType ErrorCode { get; } = errorCode;
+    public ErrorCode ErrorCode { get; } = errorCode;
     public DateTime EventTime { get; } = eventTime;
     public uint HardwareId { get; } = hardwareId;
     public uint Channel { get; } = channel;

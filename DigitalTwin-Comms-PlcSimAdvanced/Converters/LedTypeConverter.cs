@@ -22,4 +22,22 @@ public static class LedTypeConverter
             _ => throw new NotImplementedException(),
         };
     }
+
+    public static ELEDType ConvertLedType(LedType ledType)
+    {
+        return ledType switch
+        {
+            LedType.Stop => ELEDType.Stop,
+            LedType.Run => ELEDType.Run,
+            LedType.Error => ELEDType.Error,
+            LedType.Maintenance => ELEDType.Maint,
+            LedType.Redundancy => ELEDType.Redund,
+            LedType.Force => ELEDType.Force,
+            LedType.BusFault1 => ELEDType.Busf1,
+            LedType.BusFault2 => ELEDType.Busf2,
+            LedType.BusFault3 => ELEDType.Busf3,
+            LedType.BusFault4 => ELEDType.Busf4,
+            _ => throw new NotImplementedException(),
+        };
+    }
 }

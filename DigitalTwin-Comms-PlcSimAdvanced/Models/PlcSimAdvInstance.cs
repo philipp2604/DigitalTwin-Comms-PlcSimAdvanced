@@ -11,7 +11,7 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     private readonly IInstance _instance;
     private readonly SIPSuite4 _ipSuite;
 
-    public PlcSimAdvInstance(string name, CpuType cpuType = CpuType.CPU1500_Unspecified, CommunicationInterfaceType interfaceType = CommunicationInterfaceType.Softbus, string ipAddress = "192.168.0.1", string subnetMask = "255.255.255.0", string gateway = "0.0.0.0", uint interfaceId = 0, bool sendSyncEventInDefaultModeEnabled = true)
+    public PlcSimAdvInstance(string name, CpuType cpuType = CpuType.CPU1500_Unspecified, CommunicationInterface interfaceType = CommunicationInterface.Softbus, string ipAddress = "192.168.0.1", string subnetMask = "255.255.255.0", string gateway = "0.0.0.0", uint interfaceId = 0, bool sendSyncEventInDefaultModeEnabled = true)
     {
         Name = name;
         IpAddress = ipAddress;
@@ -27,9 +27,7 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
         //Setup
         _instance.IsSendSyncEventInDefaultModeEnabled = sendSyncEventInDefaultModeEnabled;
-
-        _instance.CommunicationInterface = CommunicationInterfaceTypeConverter.ConvertCommunicationInterfaceType(interfaceType);
-
+        _instance.CommunicationInterface = CommunicationInterfaceConverter.ConvertCommunicationInterfaceType(interfaceType);
         //Events
         _instance.OnAlarmNotificationDone += OnAlarmNotificationDone;
         _instance.OnDataRecordRead += OnDataRecordRead;
@@ -84,11 +82,42 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     public string SubnetMask { get; }
     public string Gateway { get; }
     public uint InterfaceId { get; }
+    public string StoragePath { get; set; }
 
-    public void PowerOn(uint timeOut = 60000)
+    public void ArchiveStorage(string fileName)
     {
-        _instance.PowerOn(timeOut);
-        _instance.SetIPSuite(InterfaceId, _ipSuite, true);
+        _instance.ArchiveStorage(fileName);
+    }
+
+    public void RetrieveStorage(string fileName)
+    {
+        _instance.RetrieveStorage(fileName);
+    }
+
+    public void CleanupStoragePath()
+    {
+        _instance.CleanupStoragePath();
+    }
+
+    public ErrorCode PowerOn(uint timeOut = 60000)
+    {
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(_instance.PowerOn(timeOut));
+        if(errorCode == ErrorCode.OK)
+            _instance.SetIPSuite(InterfaceId, _ipSuite, true);
+
+        return errorCode;
+    }
+
+    public OperatingState OperatingState { get => OperatingStateConverter.ConvertOperatingState(_instance.OperatingState); }
+
+    public void MemoryReset()
+    {
+        _instance.MemoryReset();
+    }
+
+    public void UpdateTagList()
+    {
+        _instance.UpdateTagList(ETagListDetails.)
     }
 
     public void PowerOff(uint timeOut = 60000)
@@ -141,37 +170,37 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
     private void OnAlarmNotificationDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_SequenceNumber)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         AlarmNotificationDone?.Invoke(in_Sender, new AlarmNotificationDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, in_SequenceNumber));
     }
 
     private void OnDataRecordRead(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, SDataRecordInfo in_DataRecordInfo)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         DataRecordRead?.Invoke(in_Sender, new DataRecordReadEventArgs(errorCode, in_DateTime, in_DataRecordInfo.HardwareId, in_DataRecordInfo.RecordIdx, in_DataRecordInfo.DataSize));
     }
 
     private void OnDataRecordWrite(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, SDataRecord in_DataRecord)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         DataRecordWrite?.Invoke(in_Sender, new DataRecordWriteEventArgs(errorCode, in_DateTime, in_DataRecord.Info.HardwareId, in_DataRecord.Info.RecordIdx, in_DataRecord.Info.DataSize, in_DataRecord.Data));
     }
 
     private void OnHardwareConfigChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         HardwareConfigurationChanged?.Invoke(in_Sender, new HardwareConfigurationChangedEventArgs(errorCode, in_DateTime));
     }
 
     private void OnIpAddressChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, byte in_InterfaceId, SIPSuite4 in_SIP)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         IpAddressChanged?.Invoke(in_Sender, new IpAddressChangedEventArgs(errorCode, in_SystemTime, in_InterfaceId, in_SIP.IPAddress.IPString, in_SIP.SubnetMask.IPString, in_SIP.DefaultGateway.IPString));
     }
 
     private void OnLedChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, ELEDType in_LEDType, ELEDMode in_LEDMode)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         var ledType = LedTypeConverter.ConvertLedType(in_LEDType);
         var ledMode = LedModeConverter.ConvertLedMode(in_LEDMode);
         LedChanged?.Invoke(in_Sender, new LedChangedEventArgs(errorCode, in_DateTime, ledType, ledMode));
@@ -179,14 +208,14 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
     private void OnOperatingStateChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, EOperatingState in_PrevState, EOperatingState in_OperatingState)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         var prevState = OperatingStateConverter.ConvertOperatingState(in_PrevState);
         var newState = OperatingStateConverter.ConvertOperatingState(in_OperatingState);
         OperatingStateChanged?.Invoke(in_Sender, new OperatingStateChangedEventArgs(errorCode, in_DateTime, prevState, newState));
 
         IsInitialized = false;
 
-        if(newState == OperatingStateType.Startup)
+        if(newState == OperatingState.Startup)
         {
             try
             {
@@ -202,40 +231,40 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
     private void OnProcessEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_Channel, EProcessEventType in_ProcessEventType, uint in_SequenceNumber)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         var processEventType = ProcessEventTypeConverter.ConvertProcessEventType(in_ProcessEventType);
         ProcessEventDone?.Invoke(in_Sender, new ProcessEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, in_Channel, processEventType, in_SequenceNumber));
     }
 
     private void OnProfileEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         ProfileEventDone?.Invoke(in_Sender, new ProfileEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
 
     private void OnPullOrPlugEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, EPullOrPlugEventType in_PullOrPlugEventType, uint in_SequenceNumber)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         var pullOrPlugEventType = PullOrPlugEventTypeConverter.ConvertPullOrPlugEventType(in_PullOrPlugEventType);
         PullOrPlugEventDone?.Invoke(in_Sender, new PullOrPlugEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, pullOrPlugEventType, in_SequenceNumber));
     }
 
     private void OnRackOrStationFaultEvent(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, ERackOrStationFaultType in_EventType)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         var faultType = RackOrStationFaultTypeConverter.ConvertRackOrStationFaultType(in_EventType);
         RackOrStationFault?.Invoke(in_Sender, new RackOrStationFaultEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, faultType));
     }
 
     private void OnSoftwareConfigurationChanged(IInstance instance, SOnSoftwareConfigChangedParameter event_param)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(event_param.ErrorCode);
-        var configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChangedType.SoftwareChangedInRun : SoftwareConfigChangedType.SoftwareChangedInStop;
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(event_param.ErrorCode);
+        var configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChanged.SoftwareChangedInRun : SoftwareConfigChanged.SoftwareChangedInStop;
         SoftwareConfigurationChanged?.Invoke(instance, new SoftwareConfigurationChangedEventArgs(errorCode, event_param.EventCreateTime, configChanged));
 
         IsInitialized = false;
 
-        if (configChanged == SoftwareConfigChangedType.SoftwareChangedInStop)
+        if (configChanged == SoftwareConfigChanged.SoftwareChangedInStop)
         {
             try
             {
@@ -251,19 +280,19 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
     private void OnStatusEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         StatusEventDone?.Invoke(in_Sender, new StatusEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
 
     private void OnSyncPointReached(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, uint in_Id, long in_TimeSinceSameSyncPoint_ns, long in_TimeSinceAnySyncPoint_ns, uint in_SyncPointCount)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         SyncPointReached?.Invoke(in_Sender, new SyncPointReachedEventArgs(errorCode, in_DateTime, in_Id, in_TimeSinceSameSyncPoint_ns, in_TimeSinceAnySyncPoint_ns, in_SyncPointCount));
     }
 
     private void OnUpdateEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
-        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         UpdateEventDone?.Invoke(in_Sender, new UpdateEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
 }

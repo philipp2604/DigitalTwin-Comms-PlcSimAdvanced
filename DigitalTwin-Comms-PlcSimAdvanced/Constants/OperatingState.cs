@@ -1,6 +1,6 @@
 ﻿namespace DigitalTwin_Comms_PlcSimAdvanced.Constants;
 
-public enum OperatingStateType
+public enum OperatingState
 {
     InvalidOperatingState,
     Off,

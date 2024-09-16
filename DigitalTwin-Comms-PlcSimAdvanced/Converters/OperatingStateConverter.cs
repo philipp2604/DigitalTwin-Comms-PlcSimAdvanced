@@ -5,19 +5,36 @@ namespace DigitalTwin_Comms_PlcSimAdvanced.Converters;
 
 public static class OperatingStateConverter
 {
-    public static OperatingStateType ConvertOperatingState(EOperatingState operatingState)
+    public static OperatingState ConvertOperatingState(EOperatingState operatingState)
     {
         return operatingState switch
         {
-            EOperatingState.InvalidOperatingState => OperatingStateType.InvalidOperatingState,
-            EOperatingState.Off => OperatingStateType.Off,
-            EOperatingState.Booting => OperatingStateType.Booting,
-            EOperatingState.Stop => OperatingStateType.Stop,
-            EOperatingState.Startup => OperatingStateType.Startup,
-            EOperatingState.Run => OperatingStateType.Run,
-            EOperatingState.Freeze => OperatingStateType.Freeze,
-            EOperatingState.ShuttingDown => OperatingStateType.ShuttingDown,
-            EOperatingState.Hold => OperatingStateType.Hold,
+            EOperatingState.InvalidOperatingState => OperatingState.InvalidOperatingState,
+            EOperatingState.Off => OperatingState.Off,
+            EOperatingState.Booting => OperatingState.Booting,
+            EOperatingState.Stop => OperatingState.Stop,
+            EOperatingState.Startup => OperatingState.Startup,
+            EOperatingState.Run => OperatingState.Run,
+            EOperatingState.Freeze => OperatingState.Freeze,
+            EOperatingState.ShuttingDown => OperatingState.ShuttingDown,
+            EOperatingState.Hold => OperatingState.Hold,
+            _ => throw new NotImplementedException(),
+        };
+    }
+
+    public static EOperatingState ConvertOperatingState(OperatingState operatingState)
+    {
+        return operatingState switch
+        {
+            OperatingState.InvalidOperatingState => EOperatingState.InvalidOperatingState,
+            OperatingState.Off => EOperatingState.Off,
+            OperatingState.Booting => EOperatingState.Booting,
+            OperatingState.Stop => EOperatingState.Stop,
+            OperatingState.Startup => EOperatingState.Startup,
+            OperatingState.Run => EOperatingState.Run,
+            OperatingState.Freeze => EOperatingState.Freeze,
+            OperatingState.ShuttingDown => EOperatingState.ShuttingDown,
+            OperatingState.Hold => EOperatingState.Hold,
             _ => throw new NotImplementedException(),
         };
     }

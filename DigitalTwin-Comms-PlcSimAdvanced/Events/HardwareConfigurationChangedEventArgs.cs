@@ -2,8 +2,8 @@
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Events;
 
-public class HardwareConfigurationChangedEventArgs(ErrorCodeType errorCode, DateTime eventTime) : EventArgs
+public class HardwareConfigurationChangedEventArgs(ErrorCode errorCode, DateTime eventTime) : EventArgs
 {
-    public ErrorCodeType ErrorCode { get; } = errorCode;
+    public ErrorCode ErrorCode { get; } = errorCode;
     public DateTime EventTime { get; } = eventTime;
 }
