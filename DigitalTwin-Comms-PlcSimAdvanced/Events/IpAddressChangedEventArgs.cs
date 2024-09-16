@@ -1,5 +1,4 @@
 ﻿using DigitalTwin_Comms_PlcSimAdvanced.Constants;
-using Siemens.Simatic.Simulation.Runtime;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Events;
 

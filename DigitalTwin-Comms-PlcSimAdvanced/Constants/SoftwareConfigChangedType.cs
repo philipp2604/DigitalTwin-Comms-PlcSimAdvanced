@@ -1,6 +1,6 @@
 ﻿namespace DigitalTwin_Comms_PlcSimAdvanced.Constants;
 
-public enum SoftwareConfigChangedStates
+public enum SoftwareConfigChangedType
 {
     SoftwareChangedInStop,
     SoftwareChangedInRun

@@ -2,9 +2,9 @@
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Events;
 
-public class SoftwareConfigurationChangedEventArgs(ErrorCodeType errorCode, DateTime eventTime, SoftwareConfigChangedType state) : EventArgs
+public class ProfileEventDoneEventArgs(ErrorCodeType errorCode, DateTime eventTime, uint hardwareId) : EventArgs
 {
     public ErrorCodeType ErrorCode { get; } = errorCode;
     public DateTime EventTime { get; } = eventTime;
-    public SoftwareConfigChangedType ChangeType { get; } = state;
+    public uint HardwareId { get; } = hardwareId;
 }

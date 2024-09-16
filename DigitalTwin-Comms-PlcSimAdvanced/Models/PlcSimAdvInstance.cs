@@ -1,7 +1,7 @@
 ﻿using DigitalTwin_Comms_PlcSimAdvanced.Constants;
+using DigitalTwin_Comms_PlcSimAdvanced.Converters;
 using DigitalTwin_Comms_PlcSimAdvanced.Events;
 using Siemens.Simatic.Simulation.Runtime;
-using System.Data;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Models;
 
@@ -51,24 +51,35 @@ public class PlcSimAdvInstance
         _instance.OnUpdateEventDone += OnUpdateEventDone;
     }
 
+    public event EventHandler<AlarmNotificationDoneEventArgs>? AlarmNotificationDone;
 
-    public event EventHandler<PlcSimAdvAlarmNotificationDoneEventArgs>? AlarmNotificationDone;
     public event EventHandler<DataRecordReadEventArgs>? DataRecordRead;
+
     public event EventHandler<DataRecordWriteEventArgs>? DataRecordWrite;
-    public event EventHandler<PlcSimAdvHardwareConfigurationChangedEventArgs>? HardwareConfigurationChanged;
+
+    public event EventHandler<HardwareConfigurationChangedEventArgs>? HardwareConfigurationChanged;
+
     public event EventHandler<IpAddressChangedEventArgs>? IpAddressChanged;
-    public event EventHandler<PlcSimAdvLedChangedEventArgs>? LedChanged;
-    public event EventHandler<PlcSimAdvOperatingStateChangedEventArgs>? OperatingStateChanged;
-    public event EventHandler<PlcSimAdvProcessEventDoneEventArgs>? ProcessEventDone;
-    public event EventHandler<PlcSimAdvProfileEventDoneEventArgs>? ProfileEventDone;
-    public event EventHandler<PlcSimAdvPullOrPlugEventDoneEventArgs>? PullOrPlugEventDone;
-    public event EventHandler<PlcSimAdvRackOrStationFaultEventArgs>? RackOrStationFault;
-    public event EventHandler<PlcSimAdvSoftwareConfigurationChangedEventArgs>? SoftwareConfigurationChanged;
-    public event EventHandler<PlcSimAdvStatusEventDoneEventArgs>? StatusEventDone;
+
+    public event EventHandler<LedChangedEventArgs>? LedChanged;
+
+    public event EventHandler<OperatingStateChangedEventArgs>? OperatingStateChanged;
+
+    public event EventHandler<ProcessEventDoneEventArgs>? ProcessEventDone;
+
+    public event EventHandler<ProfileEventDoneEventArgs>? ProfileEventDone;
+
+    public event EventHandler<PullOrPlugEventDoneEventArgs>? PullOrPlugEventDone;
+
+    public event EventHandler<RackOrStationFaultEventArgs>? RackOrStationFault;
+
+    public event EventHandler<SoftwareConfigurationChangedEventArgs>? SoftwareConfigurationChanged;
+
+    public event EventHandler<StatusEventDoneEventArgs>? StatusEventDone;
+
     public event EventHandler<SyncPointReachedEventArgs>? SyncPointReached;
-    public event EventHandler<PlcSimAdvUpdateEventDoneEventArgs>? UpdateEventDone;
 
-
+    public event EventHandler<UpdateEventDoneEventArgs>? UpdateEventDone;
 
     public string Name { get; }
     public bool IsInitialized { get; set; }
@@ -99,7 +110,7 @@ public class PlcSimAdvInstance
     public void Run(uint timeOut = 60000)
     {
         _instance.Run(timeOut);
-        if(!IsInitialized)
+        if (!IsInitialized)
         {
             //_instance.UpdateTagList();
         }
@@ -126,102 +137,116 @@ public class PlcSimAdvInstance
         _instance.WriteBool(tag, value);
     }
 
-
-
     private void OnAlarmNotificationDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_SequenceNumber)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
-        AlarmNotificationDone?.Invoke(in_Sender, new PlcSimAdvAlarmNotificationDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, in_SequenceNumber));
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        AlarmNotificationDone?.Invoke(in_Sender, new AlarmNotificationDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, in_SequenceNumber));
     }
 
     private void OnDataRecordRead(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, SDataRecordInfo in_DataRecordInfo)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
         DataRecordRead?.Invoke(in_Sender, new DataRecordReadEventArgs(errorCode, in_DateTime, in_DataRecordInfo.HardwareId, in_DataRecordInfo.RecordIdx, in_DataRecordInfo.DataSize));
     }
 
     private void OnDataRecordWrite(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, SDataRecord in_DataRecord)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
         DataRecordWrite?.Invoke(in_Sender, new DataRecordWriteEventArgs(errorCode, in_DateTime, in_DataRecord.Info.HardwareId, in_DataRecord.Info.RecordIdx, in_DataRecord.Info.DataSize, in_DataRecord.Data));
     }
+
     private void OnHardwareConfigChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
-        HardwareConfigurationChanged?.Invoke(in_Sender, new PlcSimAdvHardwareConfigurationChangedEventArgs(errorCode, in_DateTime));
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        HardwareConfigurationChanged?.Invoke(in_Sender, new HardwareConfigurationChangedEventArgs(errorCode, in_DateTime));
     }
+
     private void OnIpAddressChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, byte in_InterfaceId, SIPSuite4 in_SIP)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
         IpAddressChanged?.Invoke(in_Sender, new IpAddressChangedEventArgs(errorCode, in_SystemTime, in_InterfaceId, in_SIP.IPAddress.IPString, in_SIP.SubnetMask.IPString, in_SIP.DefaultGateway.IPString));
     }
+
     private void OnLedChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, ELEDType in_LEDType, ELEDMode in_LEDMode)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var ledType = LedTypeConverter.ConvertLedType(in_LEDType);
+        var ledMode = LedModeConverter.ConvertLedMode(in_LEDMode);
+        LedChanged?.Invoke(in_Sender, new LedChangedEventArgs(errorCode, in_DateTime, ledType, ledMode));
     }
 
     private void OnOperatingStateChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, EOperatingState in_PrevState, EOperatingState in_OperatingState)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var prevState = OperatingStateConverter.ConvertOperatingState(in_PrevState);
+        var newState = OperatingStateConverter.ConvertOperatingState(in_OperatingState);
+        OperatingStateChanged?.Invoke(in_Sender, new OperatingStateChangedEventArgs(errorCode, in_DateTime, prevState, newState));
     }
+
     private void OnProcessEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_Channel, EProcessEventType in_ProcessEventType, uint in_SequenceNumber)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var processEventType = ProcessEventTypeConverter.ConvertProcessEventType(in_ProcessEventType);
+        ProcessEventDone?.Invoke(in_Sender, new ProcessEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, in_Channel, processEventType, in_SequenceNumber));
     }
+
     private void OnProfileEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        ProfileEventDone?.Invoke(in_Sender, new ProfileEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
+
     private void OnPullOrPlugEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, EPullOrPlugEventType in_PullOrPlugEventType, uint in_SequenceNumber)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var pullOrPlugEventType = PullOrPlugEventTypeConverter.ConvertPullOrPlugEventType(in_PullOrPlugEventType);
+        PullOrPlugEventDone?.Invoke(in_Sender, new PullOrPlugEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, pullOrPlugEventType, in_SequenceNumber));
     }
 
     private void OnRackOrStationFaultEvent(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, ERackOrStationFaultType in_EventType)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        var faultType = RackOrStationFaultTypeConverter.ConvertRackOrStationFaultType(in_EventType);
+        RackOrStationFault?.Invoke(in_Sender, new RackOrStationFaultEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, faultType));
     }
+
     private void OnSoftwareConfigurationChanged(IInstance instance, SOnSoftwareConfigChangedParameter event_param)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(event_param.ErrorCode);
-        SoftwareConfigChanged configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChanged.SoftwareChangedInRun : SoftwareConfigChanged.SoftwareChangedInStop;
-        SoftwareConfigurationChanged?.Invoke(instance, new PlcSimAdvSoftwareConfigurationChangedEventArgs(errorCode, event_param.EventCreateTime, configChanged));
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(event_param.ErrorCode);
+        var configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChangedType.SoftwareChangedInRun : SoftwareConfigChangedType.SoftwareChangedInStop;
+        SoftwareConfigurationChanged?.Invoke(instance, new SoftwareConfigurationChangedEventArgs(errorCode, event_param.EventCreateTime, configChanged));
 
         IsInitialized = false;
 
-        if (configChanged == SoftwareConfigChanged.SoftwareChangedInStop)
+        if (configChanged == SoftwareConfigChangedType.SoftwareChangedInStop)
         {
             try
             {
                 _instance.UpdateTagList();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return;
             }
             IsInitialized = true;
         }
     }
+
     private void OnStatusEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        StatusEventDone?.Invoke(in_Sender, new StatusEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
 
     private void OnSyncPointReached(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, uint in_Id, long in_TimeSinceSameSyncPoint_ns, long in_TimeSinceAnySyncPoint_ns, uint in_SyncPointCount)
     {
-        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
         SyncPointReached?.Invoke(in_Sender, new SyncPointReachedEventArgs(errorCode, in_DateTime, in_Id, in_TimeSinceSameSyncPoint_ns, in_TimeSinceAnySyncPoint_ns, in_SyncPointCount));
     }
+
     private void OnUpdateEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
-        throw new NotImplementedException();
+        var errorCode = ErrorCodeTypeConverter.ConvertErrorCode(in_ErrorCode);
+        UpdateEventDone?.Invoke(in_Sender, new UpdateEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
-
-
-
-
-
-
-    
-
 }
