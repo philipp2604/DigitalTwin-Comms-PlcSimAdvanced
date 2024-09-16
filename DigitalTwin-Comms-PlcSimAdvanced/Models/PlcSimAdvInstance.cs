@@ -1,16 +1,17 @@
 ﻿using DigitalTwin_Comms_PlcSimAdvanced.Constants;
 using DigitalTwin_Comms_PlcSimAdvanced.Converters;
 using DigitalTwin_Comms_PlcSimAdvanced.Events;
+using DigitalTwin_Comms_PlcSimAdvanced.Interfaces.Models;
 using Siemens.Simatic.Simulation.Runtime;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Models;
 
-public class PlcSimAdvInstance : IDisposable
+public class PlcSimAdvInstance : IPlcSimAdvInstance
 {
     private readonly IInstance _instance;
     private readonly SIPSuite4 _ipSuite;
 
-    public PlcSimAdvInstance(string name, CommunicationInterfaceType interfaceType = CommunicationInterfaceType.Softbus, string ipAddress = "192.168.0.1", string subnetMask = "255.255.255.0", string gateway = "0.0.0.0", uint interfaceId = 0, bool sendSyncEventInDefaultModeEnabled = true)
+    public PlcSimAdvInstance(string name, CpuType cpuType = CpuType.CPU1500_Unspecified, CommunicationInterfaceType interfaceType = CommunicationInterfaceType.Softbus, string ipAddress = "192.168.0.1", string subnetMask = "255.255.255.0", string gateway = "0.0.0.0", uint interfaceId = 0, bool sendSyncEventInDefaultModeEnabled = true)
     {
         Name = name;
         IpAddress = ipAddress;
@@ -22,17 +23,12 @@ public class PlcSimAdvInstance : IDisposable
         _ipSuite = new SIPSuite4(ipAddress, subnetMask, gateway);
 
         //Register instance
-        _instance = SimulationRuntimeManager.RegisterInstance(Name);
+        _instance = SimulationRuntimeManager.RegisterInstance(CpuTypeConverter.ConvertCpuType(cpuType), Name);
 
         //Setup
         _instance.IsSendSyncEventInDefaultModeEnabled = sendSyncEventInDefaultModeEnabled;
 
-        if (interfaceType == CommunicationInterfaceType.None)
-            _instance.CommunicationInterface = ECommunicationInterface.None;
-        else if (interfaceType == CommunicationInterfaceType.Softbus)
-            _instance.CommunicationInterface = ECommunicationInterface.Softbus;
-        else if (interfaceType == CommunicationInterfaceType.TCPIP)
-            _instance.CommunicationInterface = ECommunicationInterface.TCPIP;
+        _instance.CommunicationInterface = CommunicationInterfaceTypeConverter.ConvertCommunicationInterfaceType(interfaceType);
 
         //Events
         _instance.OnAlarmNotificationDone += OnAlarmNotificationDone;
@@ -88,13 +84,6 @@ public class PlcSimAdvInstance : IDisposable
     public string SubnetMask { get; }
     public string Gateway { get; }
     public uint InterfaceId { get; }
-
-    public enum CommunicationInterfaceType
-    {
-        None,
-        Softbus,
-        TCPIP
-    }
 
     public void PowerOn(uint timeOut = 60000)
     {
