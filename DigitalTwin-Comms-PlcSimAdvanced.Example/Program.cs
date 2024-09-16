@@ -71,7 +71,7 @@ internal class Program
         }
     }
 
-    private void Instance_EndOfCycle(object? sender, Events.PlcSimAdvSyncPointReachedEventArgs e)
+    private void Instance_EndOfCycle(object? sender, Events.SyncPointReachedEventArgs e)
     {
         if(_instance.IsInitialized)
         {

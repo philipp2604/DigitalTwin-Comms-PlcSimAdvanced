@@ -53,10 +53,10 @@ public class PlcSimAdvInstance
 
 
     public event EventHandler<PlcSimAdvAlarmNotificationDoneEventArgs>? AlarmNotificationDone;
-    public event EventHandler<PlcSimAdvDataRecordReadEventArgs>? DataRecordRead;
-    public event EventHandler<PlcSimAdvDataRecordWriteEventArgs>? DataRecordWrite;
+    public event EventHandler<DataRecordReadEventArgs>? DataRecordRead;
+    public event EventHandler<DataRecordWriteEventArgs>? DataRecordWrite;
     public event EventHandler<PlcSimAdvHardwareConfigurationChangedEventArgs>? HardwareConfigurationChanged;
-    public event EventHandler<PlcSimAdvIpAddressChangedEventArgs>? IpAddressChanged;
+    public event EventHandler<IpAddressChangedEventArgs>? IpAddressChanged;
     public event EventHandler<PlcSimAdvLedChangedEventArgs>? LedChanged;
     public event EventHandler<PlcSimAdvOperatingStateChangedEventArgs>? OperatingStateChanged;
     public event EventHandler<PlcSimAdvProcessEventDoneEventArgs>? ProcessEventDone;
@@ -65,7 +65,7 @@ public class PlcSimAdvInstance
     public event EventHandler<PlcSimAdvRackOrStationFaultEventArgs>? RackOrStationFault;
     public event EventHandler<PlcSimAdvSoftwareConfigurationChangedEventArgs>? SoftwareConfigurationChanged;
     public event EventHandler<PlcSimAdvStatusEventDoneEventArgs>? StatusEventDone;
-    public event EventHandler<PlcSimAdvSyncPointReachedEventArgs>? SyncPointReached;
+    public event EventHandler<SyncPointReachedEventArgs>? SyncPointReached;
     public event EventHandler<PlcSimAdvUpdateEventDoneEventArgs>? UpdateEventDone;
 
 
@@ -130,30 +130,30 @@ public class PlcSimAdvInstance
 
     private void OnAlarmNotificationDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_SequenceNumber)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
         AlarmNotificationDone?.Invoke(in_Sender, new PlcSimAdvAlarmNotificationDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier, in_SequenceNumber));
     }
 
     private void OnDataRecordRead(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, SDataRecordInfo in_DataRecordInfo)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
-        DataRecordRead?.Invoke(in_Sender, new PlcSimAdvDataRecordReadEventArgs(errorCode, in_DateTime, in_DataRecordInfo.HardwareId, in_DataRecordInfo.RecordIdx, in_DataRecordInfo.DataSize));
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        DataRecordRead?.Invoke(in_Sender, new DataRecordReadEventArgs(errorCode, in_DateTime, in_DataRecordInfo.HardwareId, in_DataRecordInfo.RecordIdx, in_DataRecordInfo.DataSize));
     }
 
     private void OnDataRecordWrite(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, SDataRecord in_DataRecord)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
-        DataRecordWrite?.Invoke(in_Sender, new PlcSimAdvDataRecordWriteEventArgs(errorCode, in_DateTime, in_DataRecord.Info.HardwareId, in_DataRecord.Info.RecordIdx, in_DataRecord.Info.DataSize, in_DataRecord.Data));
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        DataRecordWrite?.Invoke(in_Sender, new DataRecordWriteEventArgs(errorCode, in_DateTime, in_DataRecord.Info.HardwareId, in_DataRecord.Info.RecordIdx, in_DataRecord.Info.DataSize, in_DataRecord.Data));
     }
     private void OnHardwareConfigChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
         HardwareConfigurationChanged?.Invoke(in_Sender, new PlcSimAdvHardwareConfigurationChangedEventArgs(errorCode, in_DateTime));
     }
     private void OnIpAddressChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, byte in_InterfaceId, SIPSuite4 in_SIP)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
-        IpAddressChanged?.Invoke(in_Sender, new PlcSimAdvIpAddressChangedEventArgs(errorCode, in_SystemTime, in_InterfaceId, in_SIP.IPAddress.IPString, in_SIP.SubnetMask.IPString, in_SIP.DefaultGateway.IPString));
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        IpAddressChanged?.Invoke(in_Sender, new IpAddressChangedEventArgs(errorCode, in_SystemTime, in_InterfaceId, in_SIP.IPAddress.IPString, in_SIP.SubnetMask.IPString, in_SIP.DefaultGateway.IPString));
     }
     private void OnLedChanged(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, ELEDType in_LEDType, ELEDMode in_LEDMode)
     {
@@ -183,13 +183,13 @@ public class PlcSimAdvInstance
     }
     private void OnSoftwareConfigurationChanged(IInstance instance, SOnSoftwareConfigChangedParameter event_param)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(event_param.ErrorCode);
-        PlcSimAdvSoftwareConfigChanged configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? PlcSimAdvSoftwareConfigChanged.SoftwareChangedInRun : PlcSimAdvSoftwareConfigChanged.SoftwareChangedInStop;
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(event_param.ErrorCode);
+        SoftwareConfigChanged configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChanged.SoftwareChangedInRun : SoftwareConfigChanged.SoftwareChangedInStop;
         SoftwareConfigurationChanged?.Invoke(instance, new PlcSimAdvSoftwareConfigurationChangedEventArgs(errorCode, event_param.EventCreateTime, configChanged));
 
         IsInitialized = false;
 
-        if (configChanged == PlcSimAdvSoftwareConfigChanged.SoftwareChangedInStop)
+        if (configChanged == SoftwareConfigChanged.SoftwareChangedInStop)
         {
             try
             {
@@ -209,8 +209,8 @@ public class PlcSimAdvInstance
 
     private void OnSyncPointReached(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_DateTime, uint in_Id, long in_TimeSinceSameSyncPoint_ns, long in_TimeSinceAnySyncPoint_ns, uint in_SyncPointCount)
     {
-        PlcSimAdvErrorCode.PlcSimAdvErrorCodeType errorCode = PlcSimAdvErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
-        SyncPointReached?.Invoke(in_Sender, new PlcSimAdvSyncPointReachedEventArgs(errorCode, in_DateTime, in_Id, in_TimeSinceSameSyncPoint_ns, in_TimeSinceAnySyncPoint_ns, in_SyncPointCount));
+        ErrorCode.PlcSimAdvErrorCodeType errorCode = ErrorCode.PlcSimAdvConvertErrorCode(in_ErrorCode);
+        SyncPointReached?.Invoke(in_Sender, new SyncPointReachedEventArgs(errorCode, in_DateTime, in_Id, in_TimeSinceSameSyncPoint_ns, in_TimeSinceAnySyncPoint_ns, in_SyncPointCount));
     }
     private void OnUpdateEventDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier)
     {
