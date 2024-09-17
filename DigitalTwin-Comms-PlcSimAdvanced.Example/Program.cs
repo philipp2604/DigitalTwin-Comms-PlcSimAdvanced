@@ -15,11 +15,13 @@ internal class Program
     public Program()
     {
         //Create a new virtual controller instance.
-        _instance = new PlcSimAdvInstance("TestInstance", CpuType.CPU1500_Unspecified, CommunicationInterface.Softbus, 0, "192.168.0.101")
+        _instance = new PlcSimAdvInstance("TestInstance", CpuType.CPU1516, CommunicationInterface.Softbus, 0, "192.168.0.101")
         {
             //Make sure the 'SyncPointReached' event is invoked at every end of a program cycle.
             IsSendSyncEventInDefaultModeEnabled = true
         };
+
+        Console.WriteLine(String.Format("Instance registered: {0}", _instance.Name));
 
         //Create a new instance of the cosimulation.
         _coSim = new Cosimulation(2000, 1000);
@@ -47,42 +49,111 @@ internal class Program
         while (true)
         {
             var key = Console.ReadKey();
+            Console.WriteLine();
+
             switch (key.Key)
             {
-                case ConsoleKey.P:
+                case ConsoleKey.S:
                 {
-                    _instance.PowerOn();
-                    Console.WriteLine("PLC Power On");
-                    break;
-                }
-                case ConsoleKey.Q:
-                {
-                    _instance.PowerOff();
-                    Console.WriteLine("PLC Power Off");
+                    try
+                    {
+                        Console.WriteLine(String.Format("Power On Instance: {0}", _instance.Name));
+                        _instance.PowerOn();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("PowerOn Instance failed: {0}", ex.Message));
+                    }
+
                     break;
                 }
                 case ConsoleKey.R:
                 {
-                    _instance.Run();
-                    Console.WriteLine("PLC Run");
+                    try
+                    {
+                        Console.WriteLine(String.Format("Run Instance: {0}", _instance.Name));
+                        _instance.Run();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("Run Instance failed: {0}", ex.Message));
+                    }
+
                     break;
                 }
-                case ConsoleKey.S:
+                case ConsoleKey.Q:
                 {
-                    _instance.Stop();
-                    Console.WriteLine("PLC Stop");
-                    break;
+                    try
+                    {
+                        Console.WriteLine(String.Format("Stop Instance: {0}", _instance.Name));
+                        _instance.Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("Stop Instance failed: {0}", ex.Message));
+                    }
+
+                    try
+                    {
+                        Console.WriteLine(String.Format("PowerOff Instance: {0}", _instance.Name));
+                        _instance.PowerOff();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("PowerOff Instance failed: {0}", ex.Message));
+                    }
+                    return;
                 }
                 case ConsoleKey.Y:
                 {
-                    _coSim.Start();
-                    Console.WriteLine("Sim Start");
+                    try
+                    {
+                        Console.WriteLine("Start CoSim");
+                        _coSim.Start();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("Start CoSim failed: {0}", ex.Message));
+                    }
                     break;
                 }
                 case ConsoleKey.X:
                 {
-                    _coSim.Stop();
-                    Console.WriteLine("Sim Stop");
+                    try
+                    {
+                        Console.WriteLine("Stop CoSim");
+                        _coSim.Stop();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("Stop CoSim failed: {0}", ex.Message));
+                    }
+                    break;
+                }
+                case ConsoleKey.N:
+                {
+                    try
+                    {
+                        Console.WriteLine("Simulate error in CoSim");
+                        _coSim.Error();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("Simulate error in CoSim failed: {0}", ex.Message));
+                    }
+                    break;
+                }
+                case ConsoleKey.M:
+                {
+                    try
+                    {
+                        Console.WriteLine("Reset simulated error in CoSim");
+                        _coSim.PackageOK();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(String.Format("Reset simulated error in CoSim failed: {0}", ex.Message));
+                    }
                     break;
                 }
             }

@@ -485,7 +485,6 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         var newState = OperatingStateConverter.ConvertOperatingState(in_OperatingState);
         OperatingStateChanged?.Invoke(in_Sender, new OperatingStateChangedEventArgs(errorCode, in_DateTime, prevState, newState));
 
-        IsInitialized = false;
 
         if(newState == OperatingState.Startup)
         {
