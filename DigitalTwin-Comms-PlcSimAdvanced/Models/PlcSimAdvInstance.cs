@@ -6,6 +6,9 @@ using Siemens.Simatic.Simulation.Runtime;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Models;
 
+/// <summary>
+/// A class implementing <see cref="IPlcSimAdvInstance"/>, used for communicating with PLCSim Advanced instances.
+/// </summary>
 public class PlcSimAdvInstance : IPlcSimAdvInstance
 {
     private readonly IInstance _instance;
@@ -24,9 +27,6 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     public PlcSimAdvInstance(string name, CpuType cpuType = CpuType.CPU1500_Unspecified, CommunicationInterface interfaceType = CommunicationInterface.Softbus, uint interfaceId = 0, string ipAddress = "192.168.0.1", string subnetMask = "255.255.255.0", string gateway = "0.0.0.0")
     {
         Name = name;
-        IpAddress = ipAddress;
-        SubnetMask = subnetMask;
-        Gateway = gateway;
         InterfaceId = interfaceId;
 
         //Ip settings
@@ -56,153 +56,90 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         _instance.OnUpdateEventDone += OnUpdateEventDone;
     }
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    #region Events
+    /// <inheritdoc/>
     public event EventHandler<AlarmNotificationDoneEventArgs>? AlarmNotificationDone;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<DataRecordReadEventArgs>? DataRecordRead;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<DataRecordWriteEventArgs>? DataRecordWrite;
 
-    /// <summary>
-    /// Event being invoked if the hardware configuration changed.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<HardwareConfigurationChangedEventArgs>? HardwareConfigurationChanged;
 
-    /// <summary>
-    /// Event being invoked if an ip address changed.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<IpAddressChangedEventArgs>? IpAddressChanged;
 
-    /// <summary>
-    /// Event being invoked if the state of an LED changed.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<LedChangedEventArgs>? LedChanged;
 
-    /// <summary>
-    /// Event being invoked if the CPU's operating state changed.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<OperatingStateChangedEventArgs>? OperatingStateChanged;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<ProcessEventDoneEventArgs>? ProcessEventDone;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<ProfileEventDoneEventArgs>? ProfileEventDone;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<PullOrPlugEventDoneEventArgs>? PullOrPlugEventDone;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<RackOrStationFaultEventArgs>? RackOrStationFault;
 
-    /// <summary>
-    /// Event being invoked if the CPU's software configuration changed.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<SoftwareConfigurationChangedEventArgs>? SoftwareConfigurationChanged;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<StatusEventDoneEventArgs>? StatusEventDone;
 
-    /// <summary>
-    /// Event being invoked if a synchronization point is reached.
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<SyncPointReachedEventArgs>? SyncPointReached;
 
-    /// <summary>
-    /// TODO
-    /// </summary>
+    /// <inheritdoc/>
     public event EventHandler<UpdateEventDoneEventArgs>? UpdateEventDone;
+    #endregion
 
-    /// <summary>
-    /// Gets the default gateway of the communication interface.
-    /// </summary>
-    public string Gateway { get; }
-
-    /// <summary>
-    /// Gets the id of the communication interface.
-    /// </summary>
+    #region Properties
+    /// <inheritdoc/>
     public uint InterfaceId { get; }
 
-    /// <summary>
-    /// Gets the ip address of the communication interface.
-    /// </summary>
-    public string IpAddress { get; }
+    /// <inheritdoc/>
+    public bool IsInitialized { get; private set; }
 
-    /// <summary>
-    /// Gets wheter the tag list is initialized.
-    /// </summary>
-    public bool IsInitialized { get; set; }
-
-    /// <summary>
-    /// Gets or sets if the <see cref="SyncPointReached"/> event is invoked in every mode after every cycle.
-    /// </summary>
+    /// <inheritdoc/>
     public bool IsSendSyncEventInDefaultModeEnabled { get => _instance.IsSendSyncEventInDefaultModeEnabled; set => _instance.IsSendSyncEventInDefaultModeEnabled = value; }
 
-    /// <summary>
-    /// Gets the instance's name.
-    /// </summary>
+    /// <inheritdoc/>
     public string Name { get; }
 
-    /// <summary>
-    /// Gets the current operating state.
-    /// </summary>
+    /// <inheritdoc/>
     public OperatingState OperatingState { get => OperatingStateConverter.ConvertOperatingState(_instance.OperatingState); }
 
-    /// <summary>
-    /// Gets or sets the time scale factor.
-    /// </summary>
+    /// <inheritdoc/>
     public double ScaleFactor { get => _instance.ScaleFactor; set => _instance.ScaleFactor = value; }
 
-    /// <summary>
-    /// Gets or sets the instance's storage path.
-    /// </summary>
+    /// <inheritdoc/>
     public string StoragePath { get => _instance.StoragePath; set => _instance.StoragePath = value; }
-
-    /// <summary>
-    /// Gets the subnet mask of the communication interface.
-    /// </summary>
-    public string SubnetMask { get; }
+    #endregion
 
     #region Virtual memory card functions
-    /// <summary>
-    /// Saves the user program, hardware configuration and remanent data in a virtual memory card.
-    /// </summary>
-    /// <param name="fileName">Path and file name of the virtual memory card.</param>
+    /// <inheritdoc/>
     public void ArchiveStorage(string fileName)
     {
         _instance.ArchiveStorage(fileName);
     }
 
-    /// <summary>
-    /// Deletes the folder that stores the virtual memory card.
-    /// </summary>
+    /// <inheritdoc/>
     public void CleanupStoragePath()
     {
         _instance.CleanupStoragePath();
     }
 
-    /// <summary>
-    /// Retrieves saved data from a virtual memory card.
-    /// </summary>
-    /// <param name="fileName">Path and filename of the virtual memory card.</param>
+    /// <inheritdoc/>
     public void RetrieveStorage(string fileName)
     {
         _instance.RetrieveStorage(fileName);
@@ -210,11 +147,7 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     #endregion
 
     #region Operating state functions
-    /// <summary>
-    /// Creates the process for the instance and starts the booting process.
-    /// </summary>
-    /// <param name="timeOut">A timeout value in milliseconds.</param>
-    /// <returns>An <see cref="ErrorCode"/> value.</returns>
+    /// <inheritdoc/>
     public ErrorCode PowerOn(uint timeOut = 60000)
     {
         var errorCode = ErrorCodeConverter.ConvertErrorCode(_instance.PowerOn(timeOut));
@@ -224,39 +157,61 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         return errorCode;
     }
 
-    /// <summary>
-    /// Ends the simulation and it's process.
-    /// </summary>
-    /// <param name="timeOut">A timeout value in milliseconds.</param>
+    /// <inheritdoc/>
     public void PowerOff(uint timeOut = 60000)
     {
         ///TODO: Unregister from all events!
         IsInitialized = false;
+
+        AlarmNotificationDone = null;
+        DataRecordRead = null;
+        DataRecordWrite = null;
+        HardwareConfigurationChanged = null;
+        IpAddressChanged = null;
+        LedChanged = null;
+        OperatingStateChanged = null;
+        ProcessEventDone = null;
+        ProfileEventDone = null;
+        PullOrPlugEventDone = null;
+        RackOrStationFault = null;
+        SoftwareConfigurationChanged = null;
+        StatusEventDone = null;
+        SyncPointReached = null;
+        UpdateEventDone = null;
+
+        _instance.OnAlarmNotificationDone -= OnAlarmNotificationDone;
+        _instance.OnDataRecordRead -= OnDataRecordRead;
+        _instance.OnDataRecordWrite -= OnDataRecordWrite;
+        _instance.OnHardwareConfigChanged -= OnHardwareConfigChanged;
+        _instance.OnIPAddressChanged -= OnIpAddressChanged;
+        _instance.OnLedChanged -= OnLedChanged;
+        _instance.OnOperatingStateChanged -= OnOperatingStateChanged;
+        _instance.OnProcessEventDone -= OnProcessEventDone;
+        _instance.OnProfileEventDone -= OnProfileEventDone;
+        _instance.OnPullOrPlugEventDone -= OnPullOrPlugEventDone;
+        _instance.OnRackOrStationFaultEvent -= OnRackOrStationFaultEvent;
+        _instance.OnSoftwareConfigurationChanged -= OnSoftwareConfigurationChanged;
+        _instance.OnStatusEventDone -= OnStatusEventDone;
+        _instance.OnSyncPointReached -= OnSyncPointReached;
+        _instance.OnUpdateEventDone -= OnUpdateEventDone;
+
         _instance.PowerOff(timeOut);
     }
 
-    /// <summary>
-    /// Requests the virtual controller to change into RUN mode.
-    /// </summary>
-    /// <param name="timeOut">A timeout value in milliseconds.</param>
+    /// <inheritdoc/>
     public void Run(uint timeOut = 60000)
     {
         _instance.Run(timeOut);
     }
 
-    /// <summary>
-    /// Requests the virtual controller to change into STOP mode.
-    /// </summary>
-    /// <param name="timeOut"></param>
+    /// <inheritdoc/>
     public void Stop(uint timeOut = 60000)
     {
         IsInitialized = false;
         _instance.Stop(timeOut);
     }
 
-    /// <summary>
-    /// Powers off the virtual controller, ends it's process and restarts it. Resets the memory inbetween.
-    /// </summary>
+    /// <inheritdoc/>
     public void MemoryReset()
     {
         _instance.MemoryReset();
@@ -264,20 +219,13 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     #endregion
 
     #region Variable tables
-    /// <summary>
-    /// Exports all entries from the variable tables into one xml file.
-    /// </summary>
-    /// <param name="fileName">Path and file name of the xml file.</param>
+    /// <inheritdoc/>
     public void CreateConfigurationFile(string fileName)
     {
         _instance.CreateConfigurationFile(fileName);
     }
-    /// <summary>
-    /// Reads the variables from the virtual controller and stores them into the shared memory.
-    /// </summary>
-    /// <param name="tagListDetails">A values of <see cref="TagListDetails"/> specifying which variables shall be read.</param>
-    /// <param name="isHMIVisibleOnly">Determines, if only variables shall be read, that are marked as 'HMI Visible'.</param>
-    /// <param name="dataBlockFilterList">A string to filter variables by the names of data blocks.</param>
+
+    /// <inheritdoc/>
     public void UpdateTagList(TagListDetails tagListDetails = TagListDetails.IOMCTDB, bool isHMIVisibleOnly = true, string? dataBlockFilterList = null)
     {
         _instance.UpdateTagList(TagListDetailsConverter.ConvertTagListDetailsType(tagListDetails), isHMIVisibleOnly, dataBlockFilterList);
@@ -285,167 +233,188 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     #endregion
 
     #region Variable access functions using tag names
-    /// <summary>
-    /// Reads the bool value of a tag.
-    /// </summary>
-    /// <param name="tag">Name of the tag.</param>
-    /// <returns>The bool value of the tag.</returns>
+    /// <inheritdoc/>
     public bool ReadBool(string tag)
     {
         return _instance.ReadBool(tag);
     }
 
-    /// <summary>
-    /// Reads the Int8 value of a tag.
-    /// </summary>
-    /// <param name="tag">Name of the tag.</param>
-    /// <returns>The Int8 value of the tag.</returns>
+    /// <inheritdoc/>
     public sbyte ReadInt8(string tag)
     {
         return _instance.ReadInt8(tag);
     }
 
-    /// <summary>
-    /// Reads the Int16 value of a tag.
-    /// </summary>
-    /// <param name="tag">Name of the tag.</param>
-    /// <returns>The Int16 value of the tag.</returns>
+    /// <inheritdoc/>
     public short ReadInt16(string tag)
     {
         return _instance.ReadInt16(tag);
     }
+
+    /// <inheritdoc/>
     public int ReadInt32(string tag)
     {
         return _instance.ReadInt32(tag);
     }
+
+    /// <inheritdoc/>
     public long ReadInt64(string tag)
     {
         return _instance.ReadInt64(tag);
     }
 
+    /// <inheritdoc/>
     public byte ReadUInt8(string tag)
     {
         return _instance.ReadUInt8(tag);
     }
 
+    /// <inheritdoc/>
     public ushort ReadUInt16(string tag)
     {
         return _instance.ReadUInt16(tag);
     }
+
+    /// <inheritdoc/>
     public uint ReadUInt32(string tag)
     {
         return _instance.ReadUInt32(tag);
     }
+
+    /// <inheritdoc/>
     public ulong ReadUInt64(string tag)
     {
         return _instance.ReadUInt64(tag);
     }
 
-    public float ReadFlot(string tag)
+    /// <inheritdoc/>
+    public float ReadFloat(string tag)
     {
         return _instance.ReadFloat(tag);
     }
 
+    /// <inheritdoc/>
     public double ReadDouble(string tag)
     {
         return _instance.ReadDouble(tag);
     }
 
+    /// <inheritdoc/>
     public sbyte ReadChar(string tag)
     {
         return _instance.ReadChar(tag);
     }
 
+    /// <inheritdoc/>
     public char ReadWChar(string tag)
     {
         return _instance.ReadWChar(tag);
     }
 
+    /// <inheritdoc/>
     public string ReadString(string tag)
     {
         return _instance.ReadString(tag);
     }
 
+    /// <inheritdoc/>
     public string ReadWString(string tag)
     {
         return _instance.ReadWString(tag);
     }
 
+    /// <inheritdoc/>
     public void WriteBool(string tag, bool value)
     {
         _instance.WriteBool(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteInt8(string tag, sbyte value)
     {
         _instance.WriteInt8(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteInt16(string tag, short value)
     {
         _instance.WriteInt16(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteInt32(string tag, int value)
     {
         _instance.WriteInt32(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteInt64(string tag, long value)
     {
         _instance.WriteInt64(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteUInt8(string tag, byte value)
     {
         _instance.WriteUInt8(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteUInt16(string tag, ushort value)
     {
         _instance.WriteUInt16(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteUInt32(string tag, uint value)
     {
         _instance.WriteUInt32(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteUInt64(string tag, ulong value)
     {
         _instance.WriteUInt64(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteFloat(string tag, float value)
     {
         _instance.WriteFloat(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteDouble(string tag, double value)
     {
         _instance.WriteDouble(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteChar(string tag, sbyte value)
     {
         _instance.WriteChar(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteWChar(string tag, char value)
     {
         _instance.WriteWChar(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteString(string tag, string value)
     {
         _instance.WriteString(tag, value);
     }
 
+    /// <inheritdoc/>
     public void WriteWString(string tag, string value)
     {
         _instance.WriteWString(tag, value);
     }
+    #endregion
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         IsInitialized = false;
@@ -462,15 +431,15 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         GC.SuppressFinalize(this);
     }
 
-
-
-
-
+    #region API interface functions
+    /// <inheritdoc/>
     public void UnregisterInstance()
     {
         _instance.UnregisterInstance();
     }
+    #endregion
 
+    #region Event processing
     private void OnAlarmNotificationDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_SequenceNumber)
     {
         var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
@@ -562,12 +531,12 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     private void OnSoftwareConfigurationChanged(IInstance instance, SOnSoftwareConfigChangedParameter event_param)
     {
         var errorCode = ErrorCodeConverter.ConvertErrorCode(event_param.ErrorCode);
-        var configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChanged.SoftwareChangedInRun : SoftwareConfigChanged.SoftwareChangedInStop;
+        var configChanged = event_param.ChangeType == ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN ? SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN : SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP;
         SoftwareConfigurationChanged?.Invoke(instance, new SoftwareConfigurationChangedEventArgs(errorCode, event_param.EventCreateTime, configChanged));
 
         IsInitialized = false;
 
-        if (configChanged == SoftwareConfigChanged.SoftwareChangedInStop)
+        if (configChanged == SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP)
         {
             try
             {
@@ -598,4 +567,5 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         UpdateEventDone?.Invoke(in_Sender, new UpdateEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
+    #endregion
 }

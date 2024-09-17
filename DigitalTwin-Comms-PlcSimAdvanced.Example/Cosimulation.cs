@@ -1,29 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿///
+/// This example program is based on the Siemens application example 'SIMATIC S7-PLCSIM Advanced: Co - Simulation via API'
+/// The respective copyright belongs to Siemens!
+/// Adjustments have been made to support a console application and to suppress compiler warnings.
+///
+#pragma warning disable IDE1006, RCS1169, IDE0044, IDE0017, RCS1036, RCS1233, CA1822, RCS1036, IDE0017, RCS1163, IDE0060
 using System.Timers;
 using Timer = System.Timers.Timer;
 
-
-namespace CoSimulationPlcSimAdv.Models
+namespace DigitalTwin_Comms_PlcSimAdvanced.Example
 {
-    public class PropertyArgs : EventArgs
-    {
-        public string Message;
-        public PropertyArgs(string message)
-        {
-            Message = message;
-        }
-
-    }
-
     public class Cosimulation
     {
-        public event EventHandler<PropertyArgs> OnOperatingStateChanged;
-        public event EventHandler<PropertyArgs> OnErrorSimulationStateChanged;
-
         //--// Inputs (Outputs of the virtual controller)
         public bool setOnBeltActive;
         public bool moveBeltActive;
@@ -64,22 +51,22 @@ namespace CoSimulationPlcSimAdv.Models
             sensorTimer.AutoReset = false;
             // Eventhandler for elapsed timer
             movementTimer.Elapsed += movementTimer_Elapsed;
-            sensorTimer.Elapsed += sensorTimer_Elapsed;  
+            sensorTimer.Elapsed += sensorTimer_Elapsed;
         }
         #endregion //Ctor
 
         #region Events
-        void sensorTimer_Elapsed(object sender, ElapsedEventArgs e)
+        void sensorTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             nextStep = true; // Jump to next step when sensor simulation time elapsed
         }
 
-        void movementTimer_Elapsed(object sender, ElapsedEventArgs e)
+        void movementTimer_Elapsed(object? sender, ElapsedEventArgs e)
         {
             nextStep = true; // Jump to next step when movement simulation time elapsed
         }
         #endregion //Events
-                 
+
         #region Cosimulation
         public void CoSimProgramm()
         {
@@ -88,12 +75,10 @@ namespace CoSimulationPlcSimAdv.Models
                 step = 0; // Set start step
                 startedTimer = false; // Reset indicator for started timer
                 nextStep = false;
-                //OnErrorSimulationStateChanged(this, new PropertyArgs("Black"));  // Reset "SIMULATE ERROR" button collor
             }
 
             if (run) // Active when "START" button pressed for Co-Simulation
             {
-                //OnOperatingStateChanged(this, new PropertyArgs("ACTIVE")); // Shows "ACTIVE" state of the Co-Simulation
 
                 // Reset all sensors at every call (sensors are set in the corresponding case)
                 sensorStartPos = false;
@@ -255,14 +240,9 @@ namespace CoSimulationPlcSimAdv.Models
                         {
                             acknReady = false; // Reset variable 
                             step = 4; // Return to step 4 (regular operation)
-                            OnErrorSimulationStateChanged(this, new PropertyArgs("Black")); // Reset "SIMULATE ERROR" button collor
                         }
                         break;
                 }
-            }
-            else
-            {
-                //OnOperatingStateChanged(this, new PropertyArgs("STOPPED"));  // Shows "STOPPED" state of the Co-Simulation
             }
         }
         #endregion //Cosimulation
@@ -272,13 +252,12 @@ namespace CoSimulationPlcSimAdv.Models
         public void Error() //Activate error simulation
         {
             error = true; // Set variable for error simulation
-            OnErrorSimulationStateChanged(this, new PropertyArgs("Red")); // Set "SIMULATE ERRO" button collor red
         }
 
         public void PackageOK() //Activate simulation: Set package on belt again when package down
         {
             if (step == 99) // When package down
-            packageOk = true; // Set variable for package on belt again
+                packageOk = true; // Set variable for package on belt again
         }
 
         public void Start() // Start Co-Simulation
@@ -295,4 +274,4 @@ namespace CoSimulationPlcSimAdv.Models
     }
 }
 
-
+#pragma warning restore IDE1006, RCS1169, IDE0044, IDE0017, RCS1036, RCS1233, CA1822, RCS1036, IDE0017, RCS1163, IDE0060

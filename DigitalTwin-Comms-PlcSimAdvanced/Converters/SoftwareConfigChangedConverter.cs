@@ -13,8 +13,8 @@ public static class SoftwareConfigChangedConverter
     {
         return configChanged switch
         {
-            ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP => SoftwareConfigChanged.SoftwareChangedInStop,
-            ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN => SoftwareConfigChanged.SoftwareChangedInRun,
+            ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP => SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP,
+            ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN => SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN,
             _ => throw new NotImplementedException(),
         };
     }
@@ -23,8 +23,8 @@ public static class SoftwareConfigChangedConverter
     {
         return configChanged switch
         {
-            SoftwareConfigChanged.SoftwareChangedInStop => ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP,
-            SoftwareConfigChanged.SoftwareChangedInRun => ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN,
+            SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP => ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_STOP,
+            SoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN => ESoftwareConfigChanged.SRSCC_SOFTWARE_CHANGED_IN_RUN,
             _ => throw new NotImplementedException(),
         };
     }

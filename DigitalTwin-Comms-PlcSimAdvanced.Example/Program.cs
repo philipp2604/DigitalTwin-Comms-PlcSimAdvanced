@@ -1,4 +1,8 @@
-﻿using CoSimulationPlcSimAdv.Models;
+﻿///
+/// This example program is based on the Siemens application example 'SIMATIC S7-PLCSIM Advanced: Co - Simulation via API'
+/// The respective copyright belongs to Siemens!
+///
+using DigitalTwin_Comms_PlcSimAdvanced.Constants;
 using DigitalTwin_Comms_PlcSimAdvanced.Models;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Example;
@@ -10,21 +14,35 @@ internal class Program
 
     public Program()
     {
-        _instance = new PlcSimAdvInstance("TestInstance", PlcSimAdvInstance.CommunicationInterfaceType.Softbus, "192.168.0.101");
+        //Create a new virtual controller instance.
+        _instance = new PlcSimAdvInstance("TestInstance", CpuType.CPU1500_Unspecified, CommunicationInterface.Softbus, 0, "192.168.0.101")
+        {
+            //Make sure the 'SyncPointReached' event is invoked at every end of a program cycle.
+            IsSendSyncEventInDefaultModeEnabled = true
+        };
+
+        //Create a new instance of the cosimulation.
         _coSim = new Cosimulation(2000, 1000);
     }
 
-    static void Main(string[] args)
+    /// <summary>
+    /// Entry point of the console app.
+    /// </summary>
+    static void Main()
     {
-        Program x = new();
-        x.Run();
+        Program prg = new();
+        prg.Run();
     }
 
+    /// <summary>
+    /// Main user program.
+    /// </summary>
     void Run()
     {
+        //Unregister instance when the process exits.
         AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
-        Console.WriteLine("Hello, World!");
+        //Call Instance_EndOfCycle at the end of every program cycle.
         _instance.SyncPointReached += Instance_EndOfCycle;
         while (true)
         {
@@ -71,10 +89,17 @@ internal class Program
         }
     }
 
+    /// <summary>
+    /// Called at the end of every program cycle (since we have set '_instance.IsSendSyncEventInDefaultModeEnabled = true').
+    /// Reads tags, processes them in the cosimulation, writes tags.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void Instance_EndOfCycle(object? sender, Events.SyncPointReachedEventArgs e)
     {
         if(_instance.IsInitialized)
         {
+            //Read the output values of the virtual controller into the Co-Simulation.
             _coSim.setOnBeltActive = _instance.ReadBool("setOnBeltActive");
             _coSim.moveBeltActive = _instance.ReadBool("moveBeltActive");
             _coSim.setOffBeltActive = _instance.ReadBool("setOffBeltActive");
