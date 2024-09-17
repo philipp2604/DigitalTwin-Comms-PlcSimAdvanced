@@ -39,7 +39,7 @@ To use this example, you will have to [download](https://support.industry.siemen
 
 All rights and code of this application example / the cosimulation class belong to Siemens!
 
-![Image](/Screenshots/Siemens application example.jpg)
+![Siemens application example](./Screenshots/SiemensApplicationExample.jpg)
 
 ## Download
 You can acquire this library either directly via the NuGet package manager or by downloading it from the [NuGet Gallery](https://www.nuget.org/packages/philipp2604.DigitalTwin.Comms.PlcSimAdvanced/).
