@@ -9,9 +9,15 @@ This library aims to wrap the Siemens PLCSIM Advanced API for easy usage in simu
 
 **Currently, only Version 5 of the API is being supported!**
 
-**Make sure you have the `Siemens.Simatic.Simulation.Runtime.Api.x64.dll` in `C:\Program Files (x86)\Common Files\Siemens\PLCSIMADV\API\5.0` - Otherwise you will have to change the reference before building this library.**
-
 **This library is still WIP and not complete yet.**
+
+## Read first
+In order to build the library or use the package, you need to have PLCSIM Advanced installed and add a reference to it's DLL.
+### Using the package / built library
+You will need to add an reference to the `Siemens.Simatic.Simulation.Runtime.Api.x64.dll`, normally found in `C:\Program Files (x86)\Common Files\Siemens\PLCSIMADV\API\5.0`.
+
+### Building the library
+You might need to update the reference path for the `Siemens.Simatic.Simulation.Runtime.Api.x64.dll`, normally found in `C:\Program Files (x86)\Common Files\Siemens\PLCSIMADV\API\5.0`.
 
 ## Credits
 This library uses the PLCSIM Advanced API from Siemens.
@@ -41,6 +47,7 @@ Writing to input variables can be done using e.g. `WriteBool(string tagName, boo
 
 ## Example application
 The repository includes an example application - the Siemens application example 'SIMATIC S7-PLCSIM Advanced: Co - Simulation via API'.
+When building the example application, make sure your reference to the API dll is set correctly (see **Read first**).
 
 To use this example, you will have to [download](https://support.industry.siemens.com/cs/document/109739660/simatic-s7%E2%80%91plcsim-advanced-co%E2%80%91simulation-via-api) the TIA Portal project, download the plc program to the virtual controller once it's powered on and run the HMI simulation.
 
