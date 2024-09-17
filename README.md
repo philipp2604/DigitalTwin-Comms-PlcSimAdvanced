@@ -9,7 +9,14 @@ This library aims to wrap the Siemens PLCSIM Advanced API for easy usage in simu
 
 **Currently, only Version 5 of the API is being supported!**
 
+**Make sure you have the `Siemens.Simatic.Simulation.Runtime.Api.x64.dll` in `C:\Program Files (x86)\Common Files\Siemens\PLCSIMADV\API\5.0` - Otherwise you will have to change the reference before building this library.**
+
 **This library is still WIP and not complete yet.**
+
+## Credits
+This library uses the PLCSIM Advanced API from Siemens.
+
+All rights about PLCSIM belong to Siemens.
 
 ## Documentation
 As the library is still at a very early state, there is no documentation yet.
