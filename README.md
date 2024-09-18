@@ -1,5 +1,5 @@
 # DigitalTwin.Comms.PlcSimAdvanced
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![build and test](https://github.com/philipp2604/DigitalTwin-Comms-PlcSimAdvanced/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/philipp2604/DigitalTwin-Comms-PlcSimAdvanced/actions/workflows/build-and-test.yml) ![GitHub Release](https://img.shields.io/github/v/release/philipp2604/DigitalTwin-Comms-PlcSimAdvanced) [![NuGet Version](https://img.shields.io/nuget/v/philipp2604.DigitalTwin.Comms.PlcSimAdvanced)](https://www.nuget.org/packages/philipp2604.DigitalTwin.Comms.PlcSimAdvanced/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![GitHub Release](https://img.shields.io/github/v/release/philipp2604/DigitalTwin-Comms-PlcSimAdvanced) [![NuGet Version](https://img.shields.io/nuget/v/philipp2604.DigitalTwin.Comms.PlcSimAdvanced)](https://www.nuget.org/packages/philipp2604.DigitalTwin.Comms.PlcSimAdvanced/)
 
 
 
