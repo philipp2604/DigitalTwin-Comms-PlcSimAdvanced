@@ -6,12 +6,36 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>
+    <PackageId>philipp2604.DigitalTwin.Comms.PlcSimAdvanced</PackageId>
+    <Title>DigitalTwin.Comms.PlcSimAdvanced</Title>
+    <Version>1.0.0</Version>
+    <Authors>Philipp Siewert</Authors>
+    <Product>DigitalTwin.Comms.PlcSimAdvanced</Product>
+    <Description>This C# library wraps the official PLCSIM Advanced API for easier usage in simulation environments.</Description>
+    <Copyright>Philipp Siewert</Copyright>
+    <PackageProjectUrl>https://github.com/philipp2604/DigitalTwin-Comms-PlcSimAdvanced</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/philipp2604/DigitalTwin-Comms-PlcSimAdvanced</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>plc;simulation;plcsim;siemens;sil;software-in-the-loop;digital twin</PackageTags>
+    <PackageReleaseNotes>Initial WIP release</PackageReleaseNotes>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="Siemens.Simatic.Simulation.Runtime.Api.x64">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Common Files\Siemens\PLCSIMADV\API\5.0\Siemens.Simatic.Simulation.Runtime.Api.x64.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
