@@ -1,12 +1,8 @@
 ﻿using DigitalTwin_Comms_PlcSimAdvanced.Constants;
 using Siemens.Simatic.Simulation.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Converters;
+
 public static class SoftwareConfigChangedConverter
 {
     public static SoftwareConfigChanged ConvertSoftwareConfigChangedType(ESoftwareConfigChanged configChanged)

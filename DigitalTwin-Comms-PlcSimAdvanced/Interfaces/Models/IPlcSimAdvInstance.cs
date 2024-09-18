@@ -1,7 +1,5 @@
 ﻿using DigitalTwin_Comms_PlcSimAdvanced.Constants;
-using DigitalTwin_Comms_PlcSimAdvanced.Converters;
 using DigitalTwin_Comms_PlcSimAdvanced.Events;
-using Siemens.Simatic.Simulation.Runtime;
 
 namespace DigitalTwin_Comms_PlcSimAdvanced.Interfaces.Models;
 
@@ -11,6 +9,7 @@ namespace DigitalTwin_Comms_PlcSimAdvanced.Interfaces.Models;
 public interface IPlcSimAdvInstance : IDisposable
 {
     #region Events
+
     /// <summary>
     /// TODO
     /// </summary>
@@ -85,9 +84,11 @@ public interface IPlcSimAdvInstance : IDisposable
     /// TODO
     /// </summary>
     public event EventHandler<UpdateEventDoneEventArgs>? UpdateEventDone;
-    #endregion
+
+    #endregion Events
 
     #region Properties
+
     /// <summary>
     /// Gets the id of the communication interface.
     /// </summary>
@@ -122,9 +123,11 @@ public interface IPlcSimAdvInstance : IDisposable
     /// Gets or sets the instance's storage path.
     /// </summary>
     public string StoragePath { get; set; }
-    #endregion
+
+    #endregion Properties
 
     #region Virtual memory card functions
+
     /// <summary>
     /// Saves the user program, hardware configuration and remanent data in a virtual memory card.
     /// </summary>
@@ -141,9 +144,11 @@ public interface IPlcSimAdvInstance : IDisposable
     /// </summary>
     /// <param name="fileName">Path and filename of the virtual memory card.</param>
     public void RetrieveStorage(string fileName);
-    #endregion
+
+    #endregion Virtual memory card functions
 
     #region Operating state functions
+
     /// <summary>
     /// Creates the process for the instance and starts the booting process.
     /// </summary>
@@ -173,9 +178,11 @@ public interface IPlcSimAdvInstance : IDisposable
     /// Powers off the virtual controller, ends it's process and restarts it. Resets the memory inbetween.
     /// </summary>
     public void MemoryReset();
-    #endregion
+
+    #endregion Operating state functions
 
     #region Variable tables
+
     /// <summary>
     /// Exports all entries from the variable tables into one xml file.
     /// </summary>
@@ -189,9 +196,11 @@ public interface IPlcSimAdvInstance : IDisposable
     /// <param name="isHMIVisibleOnly">Determines, if only variables shall be read, that are marked as 'HMI Visible'.</param>
     /// <param name="dataBlockFilterList">A string to filter variables by the names of data blocks.</param>
     public void UpdateTagList(TagListDetails tagListDetails = TagListDetails.IOMCTDB, bool isHMIVisibleOnly = true, string? dataBlockFilterList = null);
-    #endregion
+
+    #endregion Variable tables
 
     #region Variable access functions using tag names
+
     /// <summary>
     /// Reads the bool value of a tag.
     /// </summary>
@@ -401,12 +410,15 @@ public interface IPlcSimAdvInstance : IDisposable
     /// <param name="tag">Name of the tag.</param>
     /// <param name="value">The wstring value to write to the tag.</param>
     public void WriteWString(string tag, string value);
-    #endregion
+
+    #endregion Variable access functions using tag names
 
     #region API interface functions
+
     /// <summary>
     /// Unregisters the IInstance from the manager.
     /// </summary>
     public void UnregisterInstance();
-    #endregion
+
+    #endregion API interface functions
 }

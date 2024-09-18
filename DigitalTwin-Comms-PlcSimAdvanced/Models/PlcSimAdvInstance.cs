@@ -57,6 +57,7 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     }
 
     #region Events
+
     /// <inheritdoc/>
     public event EventHandler<AlarmNotificationDoneEventArgs>? AlarmNotificationDone;
 
@@ -101,9 +102,11 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
     /// <inheritdoc/>
     public event EventHandler<UpdateEventDoneEventArgs>? UpdateEventDone;
-    #endregion
+
+    #endregion Events
 
     #region Properties
+
     /// <inheritdoc/>
     public uint InterfaceId { get; }
 
@@ -124,9 +127,11 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
 
     /// <inheritdoc/>
     public string StoragePath { get => _instance.StoragePath; set => _instance.StoragePath = value; }
-    #endregion
+
+    #endregion Properties
 
     #region Virtual memory card functions
+
     /// <inheritdoc/>
     public void ArchiveStorage(string fileName)
     {
@@ -144,14 +149,16 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     {
         _instance.RetrieveStorage(fileName);
     }
-    #endregion
+
+    #endregion Virtual memory card functions
 
     #region Operating state functions
+
     /// <inheritdoc/>
     public ErrorCode PowerOn(uint timeOut = 60000)
     {
         var errorCode = ErrorCodeConverter.ConvertErrorCode(_instance.PowerOn(timeOut));
-        if(errorCode == ErrorCode.OK)
+        if (errorCode == ErrorCode.OK)
             _instance.SetIPSuite(InterfaceId, _ipSuite, true);
 
         return errorCode;
@@ -216,9 +223,11 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     {
         _instance.MemoryReset();
     }
-    #endregion
+
+    #endregion Operating state functions
 
     #region Variable tables
+
     /// <inheritdoc/>
     public void CreateConfigurationFile(string fileName)
     {
@@ -230,9 +239,11 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     {
         _instance.UpdateTagList(TagListDetailsConverter.ConvertTagListDetailsType(tagListDetails), isHMIVisibleOnly, dataBlockFilterList);
     }
-    #endregion
+
+    #endregion Variable tables
 
     #region Variable access functions using tag names
+
     /// <inheritdoc/>
     public bool ReadBool(string tag)
     {
@@ -412,13 +423,14 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     {
         _instance.WriteWString(tag, value);
     }
-    #endregion
+
+    #endregion Variable access functions using tag names
 
     /// <inheritdoc/>
     public void Dispose()
     {
         IsInitialized = false;
-        if(_instance != null)
+        if (_instance != null)
         {
             try
             {
@@ -432,14 +444,17 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
     }
 
     #region API interface functions
+
     /// <inheritdoc/>
     public void UnregisterInstance()
     {
         _instance.UnregisterInstance();
     }
-    #endregion
+
+    #endregion API interface functions
 
     #region Event processing
+
     private void OnAlarmNotificationDone(IInstance in_Sender, ERuntimeErrorCode in_ErrorCode, DateTime in_SystemTime, uint in_HardwareIdentifier, uint in_SequenceNumber)
     {
         var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
@@ -485,8 +500,7 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         var newState = OperatingStateConverter.ConvertOperatingState(in_OperatingState);
         OperatingStateChanged?.Invoke(in_Sender, new OperatingStateChangedEventArgs(errorCode, in_DateTime, prevState, newState));
 
-
-        if(newState == OperatingState.Startup)
+        if (newState == OperatingState.Startup)
         {
             try
             {
@@ -566,5 +580,6 @@ public class PlcSimAdvInstance : IPlcSimAdvInstance
         var errorCode = ErrorCodeConverter.ConvertErrorCode(in_ErrorCode);
         UpdateEventDone?.Invoke(in_Sender, new UpdateEventDoneEventArgs(errorCode, in_SystemTime, in_HardwareIdentifier));
     }
-    #endregion
+
+    #endregion Event processing
 }

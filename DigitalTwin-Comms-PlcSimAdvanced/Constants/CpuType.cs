@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace DigitalTwin_Comms_PlcSimAdvanced.Constants;
 
-namespace DigitalTwin_Comms_PlcSimAdvanced.Constants;
 public enum CpuType
 {
     CPU1500_Unspecified = 1500,

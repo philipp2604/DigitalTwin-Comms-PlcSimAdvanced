@@ -9,8 +9,8 @@ namespace DigitalTwin_Comms_PlcSimAdvanced.Example;
 
 internal class Program
 {
-    readonly PlcSimAdvInstance _instance;
-    readonly Cosimulation _coSim;
+    private readonly PlcSimAdvInstance _instance;
+    private readonly Cosimulation _coSim;
 
     public Program()
     {
@@ -30,7 +30,7 @@ internal class Program
     /// <summary>
     /// Entry point of the console app.
     /// </summary>
-    static void Main()
+    private static void Main()
     {
         Program prg = new();
         prg.Run();
@@ -39,7 +39,7 @@ internal class Program
     /// <summary>
     /// Main user program.
     /// </summary>
-    void Run()
+    private void Run()
     {
         //Unregister instance when the process exits.
         AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
@@ -168,7 +168,7 @@ internal class Program
     /// <param name="e"></param>
     private void Instance_EndOfCycle(object? sender, Events.SyncPointReachedEventArgs e)
     {
-        if(_instance.IsInitialized)
+        if (_instance.IsInitialized)
         {
             //Read the output values of the virtual controller into the Co-Simulation.
             _coSim.setOnBeltActive = _instance.ReadBool("setOnBeltActive");
@@ -181,7 +181,7 @@ internal class Program
             // Call the Co-Simulation programm
             _coSim.CoSimProgramm();
 
-            // Write the Co-Simulation values to the inputs of the virtual controller  
+            // Write the Co-Simulation values to the inputs of the virtual controller
             _instance.WriteBool("sensorStartPos", _coSim.sensorStartPos);
             _instance.WriteBool("sensorBeltStart", _coSim.sensorBeltStart);
             _instance.WriteBool("sensorBeltDest", _coSim.sensorBeltDest);
@@ -189,7 +189,7 @@ internal class Program
         }
     }
 
-    void CurrentDomain_ProcessExit(object? sender, EventArgs e)
+    private void CurrentDomain_ProcessExit(object? sender, EventArgs e)
     {
         _instance.UnregisterInstance();
     }
